@@ -5,6 +5,7 @@ plugins {
   java
   application
   id("com.github.johnrengelman.shadow") version "7.1.2"
+  id("io.spring.dependency-management") version "1.0.15.RELEASE"
 }
 
 group = "com.cintia.elisa"
@@ -27,9 +28,21 @@ application {
   mainClass.set(launcherClassName)
 }
 
+dependencyManagement {
+  imports {
+    mavenBom("org.apache.logging.log4j:log4j-bom:2.22.1")
+  }
+}
+
 dependencies {
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-core")
+
+  implementation("org.apache.logging.log4j:log4j-api")
+  implementation("org.apache.logging.log4j:log4j-core")
+  implementation("org.apache.logging.log4j:log4j-slf4j-impl")
+  implementation("org.slf4j:slf4j-api:1.7.36")
+
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 }
@@ -55,5 +68,11 @@ tasks.withType<Test> {
 }
 
 tasks.withType<JavaExec> {
-  args = listOf("run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName", "--on-redeploy=$doOnChange")
+  args = listOf(
+    "run",
+    mainVerticleName,
+    "--redeploy=$watchForChange",
+    "--launcher-class=$launcherClassName",
+    "--on-redeploy=$doOnChange"
+  )
 }
