@@ -1,6 +1,7 @@
 package com.cintia.elisa.verticles;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 
@@ -13,9 +14,11 @@ public class MainVerticle extends AbstractVerticle {
 
   @Override
   public void start(final Promise<Void> startPromise) throws Exception {
-      System.out.println("Start " + getClass().getName());
+      System.out.println("Start " + getClass().getName() +  " on thread " + Thread.currentThread().getName());
       vertx.deployVerticle(new VerticleA());
       vertx.deployVerticle(new VerticleB());
+      vertx.deployVerticle(VerticleN.class.getName(),
+        new DeploymentOptions().setInstances(4));
 
       startPromise.complete();
   }
